@@ -6,66 +6,80 @@ namespace EvolveGames
 {
     public class HandsHolder : MonoBehaviour
     {
-        [Header("HandsHolder")]
-        [SerializeField] bool Enabled = true;
-        [Space, Header("Main")]
-        [SerializeField, Range(0.0005f, 0.02f)] float Amount = 0.005f;
-        [SerializeField, Range(1.0f, 3.0f)] float SprintAmount = 1.4f;
+        [Header("Hands Holder Settings")]
+        [SerializeField] private bool enabledBobbing = true;
+        [SerializeField] private bool enabledSway = true;
+        [SerializeField] private bool enabledBreathing = true;
 
-        [SerializeField, Range(5f, 20f)] float Frequency = 13.0f;
-        [SerializeField, Range(50f, 10f)] float Smooth = 24.2f;
-        [Header("RotationMovement")]
-        [SerializeField] bool EnabledRotationMovement = true;
-        [SerializeField, Range(0.1f, 10.0f)] float RotationMultipler = 6f;
-        float ToggleSpeed = 1.5f;
-        float AmountValue;
-        Vector3 StartPos;
-        Vector3 StartRot;
-        Vector3 FinalPos;
-        Vector3 FinalRot;
-        CharacterController player;
+        [Header("Bobbing Motion")]
+        [SerializeField, Range(0.0005f, 0.02f)] private float bobAmount = 0.008f;
+        [SerializeField, Range(1.0f, 3.0f)] private float sprintMultiplier = 1.6f;
+        [SerializeField, Range(5f, 20f)] private float bobFrequency = 12.0f;
+        [SerializeField, Range(50f, 10f)] private float smoothness = 18f;
+
+        [Header("Sway Motion")]
+        [SerializeField, Range(0.1f, 10.0f)] private float swayMultiplier = 4f;
+
+        [Header("Breathing Motion")]
+        [SerializeField, Range(0.0001f, 0.005f)] private float breathAmount = 0.002f;
+        [SerializeField, Range(1.0f, 5.0f)] private float breathSpeed = 1.5f;
+
+        private Vector3 originalPosition;
+        private Quaternion originalRotation;
+        private Vector3 targetPosition;
+        private Quaternion targetRotation;
+
+        private CharacterController player;
+
         private void Awake()
         {
             player = GetComponentInParent<CharacterController>();
-            if (player.transform.GetComponent<PlayerController>() != null) ToggleSpeed = player.transform.GetComponent<PlayerController>().CroughSpeed * 1.5f;
-            else ToggleSpeed = 1.5f;
-            AmountValue = Amount;
-            StartPos = transform.localPosition;
-            StartRot = transform.localRotation.eulerAngles;
+            originalPosition = transform.localPosition;
+            originalRotation = transform.localRotation;
         }
 
         private void Update()
         {
-            if (!Enabled) return;
+            if (!enabledBobbing && !enabledSway && !enabledBreathing) return;
+
             float speed = new Vector3(player.velocity.x, 0, player.velocity.z).magnitude;
-            Reset();
-            if (speed > ToggleSpeed && player.isGrounded)
-            {
-                FinalPos += HeadBobMotion();
-                FinalRot += new Vector3(-HeadBobMotion().z, 0, HeadBobMotion().x) * RotationMultipler * 10;
-            }
-            else if (speed > ToggleSpeed) FinalPos += HeadBobMotion() / 2f;
+            float movementFactor = Mathf.Clamp01(speed / 5.0f);
 
-            if (Input.GetKeyDown(KeyCode.LeftShift)) AmountValue = Amount * SprintAmount;
-            else if (Input.GetKeyUp(KeyCode.LeftShift)) AmountValue = Amount / SprintAmount;
-            transform.localPosition = Vector3.Lerp(transform.localPosition, FinalPos, Smooth * Time.deltaTime);
-            if (EnabledRotationMovement) transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(FinalRot), Smooth / 1.5f * Time.deltaTime);
+            ApplyBobbing(movementFactor);
+            ApplySway();
+            ApplyBreathing();
 
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, smoothness * Time.deltaTime);
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, smoothness * Time.deltaTime);
         }
 
-        private Vector3 HeadBobMotion()
+        private void ApplyBobbing(float movementFactor)
         {
-            Vector3 pos = Vector3.zero;
-            pos.y += Mathf.Lerp(pos.y, Mathf.Sin(Time.time * Frequency) * AmountValue * 2f, Smooth * Time.deltaTime);
-            pos.x += Mathf.Lerp(pos.x, Mathf.Cos(Time.time * Frequency / 2f) * AmountValue * 1.3f, Smooth * Time.deltaTime);
-            return pos;
+            if (!enabledBobbing) return;
+
+            float sprintEffect = (Input.GetKey(KeyCode.LeftShift)) ? sprintMultiplier : 1.0f;
+            float bobbingEffect = Mathf.Sin(Time.time * bobFrequency * sprintEffect) * bobAmount * movementFactor;
+            float lateralEffect = Mathf.Cos(Time.time * bobFrequency / 2f) * bobAmount * 0.5f * movementFactor;
+
+            targetPosition = originalPosition + new Vector3(lateralEffect, bobbingEffect, 0);
         }
-        private void Reset()
+
+        private void ApplySway()
         {
-            if (transform.localPosition == StartPos) return;
-            FinalPos = Vector3.Lerp(FinalPos, StartPos, 1 * Time.deltaTime);
-            FinalRot = Vector3.Lerp(FinalRot, StartRot, 1 * Time.deltaTime);
+            if (!enabledSway) return;
+
+            float mouseX = Input.GetAxis("Mouse X") * swayMultiplier * -0.02f;
+            float mouseY = Input.GetAxis("Mouse Y") * swayMultiplier * -0.02f;
+
+            targetRotation = Quaternion.Euler(originalRotation.eulerAngles + new Vector3(mouseY, mouseX, mouseX * 2f));
+        }
+
+        private void ApplyBreathing()
+        {
+            if (!enabledBreathing) return;
+
+            float breathEffect = Mathf.Sin(Time.time * breathSpeed) * breathAmount;
+            targetPosition += new Vector3(0, breathEffect, 0);
         }
     }
-
 }
