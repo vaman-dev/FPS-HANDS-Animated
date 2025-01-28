@@ -1324,7 +1324,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 04f2483dea1daa7499c025a7b7c52732, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 96cc7f0143040c148837d9ad92cb7908, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -2046,9 +2046,44 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
         type: 3}
+      propertyPath: bobAmount
+      value: 0.01103
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: breathSpeed
+      value: 2.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: breathAmount
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
       propertyPath: footstepAudio
       value: 
       objectReference: {fileID: 1510627245}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: footstepInterval
+      value: 0.724
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: sprintMultiplier
+      value: 1.434
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: footstepSounds.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850621785525277727, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
+        type: 3}
+      propertyPath: footstepSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 96cc7f0143040c148837d9ad92cb7908, type: 3}
     - target: {fileID: 3850621786375369934, guid: efc0ddcfad1e0714fa6a41b6fb2d4b99,
         type: 3}
       propertyPath: ItemCanvasLogo
