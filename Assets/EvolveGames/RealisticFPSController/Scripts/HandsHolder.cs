@@ -24,12 +24,17 @@ namespace EvolveGames
         [SerializeField, Range(0.0001f, 0.005f)] private float breathAmount = 0.002f;
         [SerializeField, Range(1.0f, 5.0f)] private float breathSpeed = 1.5f;
 
+        [Header("Footstep Audio")]
+        public AudioSource footstepAudio; // Assign in Inspector
+        public AudioClip[] footstepSounds; // Assign different footstep sounds in the Inspector
+        [SerializeField, Range(0.2f, 1f)] private float footstepInterval = 0.5f; // Time between steps
+
         private Vector3 originalPosition;
         private Quaternion originalRotation;
         private Vector3 targetPosition;
         private Quaternion targetRotation;
-
         private CharacterController player;
+        private float footstepTimer;
 
         private void Awake()
         {
@@ -48,6 +53,7 @@ namespace EvolveGames
             ApplyBobbing(movementFactor);
             ApplySway();
             ApplyBreathing();
+            HandleFootsteps(speed);
 
             transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, smoothness * Time.deltaTime);
             transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, smoothness * Time.deltaTime);
@@ -80,6 +86,18 @@ namespace EvolveGames
 
             float breathEffect = Mathf.Sin(Time.time * breathSpeed) * breathAmount;
             targetPosition += new Vector3(0, breathEffect, 0);
+        }
+
+        private void HandleFootsteps(float speed)
+        {
+            if (footstepAudio == null || footstepSounds.Length == 0 || speed < 1f || !player.isGrounded) return;
+
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                footstepAudio.PlayOneShot(footstepSounds[Random.Range(0, footstepSounds.Length)]);
+                footstepTimer = footstepInterval / (speed * 0.5f); // Adjust timing based on speed
+            }
         }
     }
 }
