@@ -10,6 +10,10 @@ public class GunController : MonoBehaviour
     public Light gunFlashLight; // Assign in Inspector
     public BulletManager bulletManager; // Reference to BulletManager script
 
+    public Transform firingPoint; // Assign in Inspector (where bullets spawn)
+    public GameObject bulletPrefab; // Bullet to instantiate
+    public float bulletSpeed = 50f; // Speed of the bullet
+
     public float fireRate = 0.2f; // Fire rate in seconds (adjust as needed)
     private float nextFireTime = 0f; // Tracks when the player can shoot again
     private float flashDuration = 0.05f; // How long the light stays on
@@ -26,6 +30,7 @@ public class GunController : MonoBehaviour
             animator.SetBool("Shoot", true);
             bulletManager.FireBullet(); // Reduce ammo count
             PlayGunEffects();
+            FireProjectile();
         }
         else
         {
@@ -62,5 +67,19 @@ public class GunController : MonoBehaviour
         gunFlashLight.enabled = true; // Turn on the light
         yield return new WaitForSeconds(flashDuration); // Wait for 0.05 seconds
         gunFlashLight.enabled = false; // Turn off the light
+    }
+
+    void FireProjectile()
+    {
+        if (bulletPrefab != null && firingPoint != null)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firingPoint.position, firingPoint.rotation);
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                rb.velocity = firingPoint.forward * bulletSpeed; // Shoot in the firing direction
+            }
+        }
     }
 }
