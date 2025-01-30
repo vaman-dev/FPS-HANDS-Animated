@@ -3,22 +3,7 @@ guid: 81fd7ebfca65ffc488cb15e12445ec65
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Metal_Corrogated_Shiny
-    second: {fileID: 2800000, guid: f2aa8aedd94c91a438db9962b1eaa7b8, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Steel Brushed Stainless
-    second: {fileID: 2800000, guid: 8fef7de1f55bac44f924041648a92c3c, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Wood_Cherry_Original
-    second: {fileID: 2800000, guid: 28b5e3410a70cc040a491feab9c4dcbb, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
