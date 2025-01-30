@@ -8,6 +8,7 @@ public class GunController : MonoBehaviour
     public AudioSource gunFireSound; // Assign in Inspector
     public ParticleSystem muzzleFlash; // Assign in Inspector
     public Light gunFlashLight; // Assign in Inspector
+    public BulletManager bulletManager; // Reference to BulletManager script
 
     public float fireRate = 0.2f; // Fire rate in seconds (adjust as needed)
     private float nextFireTime = 0f; // Tracks when the player can shoot again
@@ -16,25 +17,25 @@ public class GunController : MonoBehaviour
     void Update()
     {
         // Right-click to aim
-        if (Input.GetMouseButton(1)) // Right Mouse Button
-        {
-            animator.SetBool("isAiming", true);
-        }
-        else
-        {
-            animator.SetBool("isAiming", false);
-        }
+        animator.SetBool("isAiming", Input.GetMouseButton(1));
 
-        // Left-click to shoot (Only if aiming & fire rate cooldown allows)
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
+        // Left-click to shoot (Only if aiming, fire rate cooldown allows, and has bullets)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime && bulletManager.CanShoot())
         {
             nextFireTime = Time.time + fireRate; // Set next fire time
             animator.SetBool("Shoot", true);
+            bulletManager.FireBullet(); // Reduce ammo count
             PlayGunEffects();
         }
         else
         {
             animator.SetBool("Shoot", false);
+        }
+
+        // Reload when pressing 'R'
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            StartCoroutine(bulletManager.Reload());
         }
     }
 
@@ -59,7 +60,7 @@ public class GunController : MonoBehaviour
     IEnumerator FlashGunLight()
     {
         gunFlashLight.enabled = true; // Turn on the light
-        yield return new WaitForSeconds(flashDuration); // Wait for 0.1 seconds
+        yield return new WaitForSeconds(flashDuration); // Wait for 0.05 seconds
         gunFlashLight.enabled = false; // Turn off the light
     }
 }
