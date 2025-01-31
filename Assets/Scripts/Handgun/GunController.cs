@@ -1,4 +1,4 @@
-using UnityEngine;
+~~using UnityEngine;
 using System.Collections;
 
 public class GunController : MonoBehaviour
@@ -13,7 +13,7 @@ public class GunController : MonoBehaviour
     public Transform firingPoint; // Assign in Inspector (where bullets spawn)
     public GameObject bulletPrefab; // Bullet to instantiate
     public float bulletSpeed = 50f; // Speed of the bullet
-
+~
     public float fireRate = 0.2f; // Fire rate in seconds (adjust as needed)
     private float nextFireTime = 0f; // Tracks when the player can shoot again
     private float flashDuration = 0.05f; // How long the light stays on
